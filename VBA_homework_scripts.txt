@@ -1,0 +1,165 @@
+Sub test()
+
+    Dim ticker_name As String
+    Dim ticker_row As Long
+    Dim total_volume As LongLong
+    Dim close_value As Double
+    Dim open_valie As Double
+    Dim flag As Boolean
+    Dim change_value As Double
+    Dim percent_value As Double
+    Dim lastrow As Long
+    
+    Dim greatest_inc As Double
+    Dim greatest_dec As Double
+    Dim greatest_tot As LongLong
+    
+    
+    
+                    
+                    
+                    total_volume = 0
+                    flag = False
+                    
+    
+    For Each ws In Worksheets
+    
+        lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+        
+        greatest_inc = 0
+        greatest_dec = 0
+        greatest_tot = 0
+        
+        ws.Range("K1").Value = "Ticker"
+        ws.Range("L1").Value = "Yearly Change"
+        ws.Range("M1").Value = "Percent Change"
+        ws.Range("N1").Value = "Total Stock Volume"
+        ws.Range("Q1").Value = "Ticker"
+        ws.Range("R1").Value = "Value"
+        ws.Range("P2").Value = "Greatest % Increase"
+        ws.Range("P3").Value = "Greatest % Decrease"
+        ws.Range("P2").Value = "Greatest total Volume"
+        
+        ws.Range("K:R").EntireColumn.AutoFit
+        
+        
+        ticker_row = 2
+        
+            For i = 2 To lastrow
+            
+            
+                
+            
+                    If flag = False Then
+                    
+                    open_value = ws.Cells(i, 3).Value
+                    
+                    'Range("O" & ticker_row).Value = open_value
+                    
+                    flag = True
+                    
+                    
+                    
+                    End If
+                    
+                   
+                    
+                    If ws.Cells(i, 1).Value <> ws.Cells(i + 1, 1).Value Then
+                    
+                                            
+                        ticker_name = ws.Cells(i, 1)
+                        
+                        total_volume = total_volume + ws.Cells(i, 7).Value
+                        close_value = ws.Cells(i, 6).Value
+                        change_value = close_value - open_value
+                        ws.Range("L" & ticker_row).Value = change_value
+                        
+                       
+                        If open_value = 0 Then
+                            percent_value = 0
+                        Else
+                            
+                        
+                        percent_value = change_value / open_value
+                        
+                        End If
+                        
+                        Percent = Format(percent_value, "percent")
+                        ws.Range("M" & ticker_row).Value = Percent
+                        ws.Range("K" & ticker_row).Value = ticker_name
+                        ws.Range("N" & ticker_row).Value = total_volume
+                        
+                        'greatest value
+                        If greatest_inc < percent_value Then
+                            greatest_inc = percent_value
+                            Percent = Format(percent_value, "percent")
+                            ws.Range("Q2").Value = ticker_name
+                            ws.Range("R2").Value = Percent
+                            
+                        End If
+                        
+                            
+                        If greatest_dec > percent_value Then
+                            greatest_dec = percent_value
+                            Percent = Format(percent_value, "percent")
+                            ws.Range("Q3").Value = ticker_name
+                            ws.Range("R3").Value = Percent
+                            
+                        End If
+                        
+                        
+                        If greatest_tot < total_volume Then
+                            greatest_tot = total_volume
+                            ws.Range("Q4").Value = ticker_name
+                            ws.Range("R4").Value = total_volume
+                        End If
+                        
+                        
+                        
+                        
+                        'Range("N" & ticker_row).Value = close_value
+                        
+                       'color different
+                    
+                                        If ws.Cells(ticker_row, 13).Value > 0 Then
+                            
+                                    ws.Cells(ticker_row, 13).Interior.ColorIndex = 4
+                                    
+                                    Else
+                                    
+                                    ws.Cells(ticker_row, 13).Interior.ColorIndex = 3
+                            
+                                End If
+                                
+                                
+                        
+                        ticker_row = ticker_row + 1
+                        
+                        total_volume = 0
+                        flag = False
+                        
+                        
+                        
+                        
+                        Else
+                        
+                            total_volume = total_volume + ws.Cells(i, 7).Value
+                          
+                    End If
+                    
+                
+                        
+              
+            Next i
+            
+    Next ws
+            
+
+                    
+
+
+End Sub
+
+
+
+
